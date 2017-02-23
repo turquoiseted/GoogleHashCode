@@ -75,12 +75,17 @@ class EndPoint:
                     lowest=self._cacheDict[self._cacheList[i0]]
         return lowest
 
+    def return_video_list(self):
+        return self._videoList
+
+    def return_cache_list(self):
+        return self._cacheList
+
 class World :
     def __init__(self,cacheList,videoList,endPointList):
         self._cacheList=cacheList
         self._videoList=videoList
         self._endPointList=endPointList
-
 
     def return_cache_list(self):
         return self._cacheList
@@ -89,4 +94,4 @@ class World :
         return self._videoList
 
     def return_endpoint_list(self):
-        return self._endPointList   
+        return self._endPointList
