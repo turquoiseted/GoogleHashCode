@@ -20,6 +20,11 @@ def main(filename, video_name):
     caches = int(temp_array[3])
     size = int(temp_array[4])
 
+    cache_array = []
+    for cs in range(caches):
+        cache_array.append(Cache(size))
+
+
     for x in range(len(main_file[1])):
         if (main_file[1][x] == " ") or (x == (len(main_file[0])-1)):
             temp_array.append(temp_number)
@@ -30,14 +35,13 @@ def main(filename, video_name):
     # store video data into an array of video class
     video_array = []
     for video in range(videos):
-        video_temp = video(video, temp_array[video])
-        video_array.append(video_temp)
-
-    videos_sizes = temp_array
+        video_array.append(Video(video, temp_array[video]))
 
     
     cache_dictionary = {}
     counter = 2
+
+    endpoint_array = []
     for endpoint in range(endpoints):
         for x in range(len(main_file[counter])):
             if (main_file[counter][x] == " ") or (x == (len(main_file[0])-1)):
@@ -45,7 +49,9 @@ def main(filename, video_name):
                 temp_number = ""
             else:
                 temp_number += main_file[counter][x]
-        endpoint_name = temp_array[0]
+
+        endpoint_array.append(Endpoint(temp_array[1]))
+
         counter += 1
         for cache in range(len(temp_array[1])):
             for x in range(len(main_file[counter])):
@@ -55,7 +61,10 @@ def main(filename, video_name):
                 else:
                     temp_number += main_file[counter][x]
             counter += 1
-            cache_dictionary[temp_array[0]] = temp_array[1]
+
+            endpoint_array[endpoint].add_cache(temp_array[0], temp_array[1])
+
+
     requests = []
     for lines in range(counter, len(main_file)):
         for x in range(len(main_file[lines])):
@@ -66,9 +75,8 @@ def main(filename, video_name):
                 temp_number += main_file[lines][x]
 
             counter += 1
-            info_video = temp_array[0]
-            info_endpoint = temp_array[1]
-            info_requests = temp_array[2]
+            endpoint_array[temp_array[1]].add_video(temp_array[0],temp_array[2])
+           
 
 
 main('C:/Users/Dmitri/Documents/GitHub/GoogleHashCode/kittens.in', "Kittens_video")
