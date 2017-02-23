@@ -1,9 +1,7 @@
 
+from classes from Video
 
-
-
-def main(filename):
-
+def main(filename, video_name):
     file = open(filename, 'r')
     main_file = file.readlines()
 
@@ -29,8 +27,15 @@ def main(filename):
         else:
             temp_number += main_file[1][x]
 
+    # store video data into an array of video class
+    video_array = []
+    for video in range(videos):
+        video_temp = video(video, temp_array[video])
+        video_array.append(video_temp)
+
     videos_sizes = temp_array
 
+    
     cache_dictionary = {}
     counter = 2
     for endpoint in range(endpoints):
@@ -66,4 +71,4 @@ def main(filename):
             info_requests = temp_array[2]
 
 
-main('C:/Users/Dmitri/Documents/GitHub/GoogleHashCode/kittens.in')
+main('C:/Users/Dmitri/Documents/GitHub/GoogleHashCode/kittens.in', "Kittens_video")
