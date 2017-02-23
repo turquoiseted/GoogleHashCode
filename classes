@@ -1,0 +1,63 @@
+class Video:
+    def __init__(self, name, size):
+        self._name=name
+        self._size=size
+        self._videoList=[]
+
+    def addVideo(self,video):
+        self._videoList.append(video)
+
+    def returnName(self):
+        return self._name
+
+    def returnSize(self):
+        return self._size
+
+class Cache:
+    def __init__ (self, name):
+        self._name=name
+        self._videoList=[]
+
+    def addVideo(self, video):
+        self._videoList.append(video)
+
+    def checkForVideo(self,video):
+        for i0 in range(len(self._videoList)):
+            if self._videoList[i0].returnName()==video.returnName:
+               return True
+        return False
+
+class EndPoint:
+    def __init__(self,latency):
+        self._cacheDict={}
+        self._cacheList=[]
+        self._videoList=[]
+        self._videoRequests{}
+        self._latency=latency
+
+    def addCache(self, cache, latency):
+        self._cacheList.append(cache)
+        self._cacheDict[cache]=latency
+
+    def addVideo(self,video,requests):
+        self._videoList.append(video)
+        self._videoRequests[video]=requests
+
+    def returnTotalLatency(self):
+        latency=0
+        for i0 in self._videoList:
+            if self.returnLatency(i0)!=-1:
+                latency+= self.returnLatency(i0)
+            else:
+                latency+=self._latency
+        return latency
+
+    def returnLatency(self, video):
+        lowest=-1
+        for i0 in range(len(self._cacheList)):
+            if self._cacheList[].checkForVideo(video):
+                if lowest==-1:
+                    lowest=self._cacheDict[self._cacheList[i0]]
+                elif lowest>=self._cacheDict[self._cacheList[i0]]:
+                    lowest=self._cacheDict[self._cacheList[i0]]
+        return lowest
