@@ -2,10 +2,7 @@ class Video:
     def __init__(self, name, size):
         self._name=name
         self._size=size
-        self._videoList=[]
 
-    def addVideo(self,video):
-        self._videoList.append(video)
 
     def returnName(self):
         return self._name
