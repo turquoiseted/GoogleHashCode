@@ -35,10 +35,12 @@ class EndPoint:
         self._cacheDict={}
         self._cacheList=[]
         self._videoList=[]
-        self._videoRequests={}
+        self._videoDict={}
         self._latency=latency
 
     def add_cache(self, cache, latency):
+        if (latency>=self._latency):
+            return False
         for i0 in range(len(self._cacheList)):
             if self._cacheDict[self._cacheList[i0]]>latency:
                 for i1 in range(len(self._cacheList),i0):
@@ -46,15 +48,21 @@ class EndPoint:
                 self._cacheList[i0]=cache
                 break
         self._cacheDict[cache]=latency
+        return True
 
     def add_video(self,video,requests):
-        for i0 in range(len(self._cacheList)):
+        for i0 in range(len(self._videoList)):
             if self._videoDict[self._videoList[i0]]<requests:
-                for i1 in range(len(self._videoList),i0):
+                self._videoList.append(self._videoList[len(self._videoList)-1])
+                for i1 in range(len(self._videoList)-2,i0-1,-1):
                     self._videoList[i1+1]=self._videoList[i1]
-                self._cacheList[i0]=video
+                self._videoList[i0]=video
                 break
-        self._videoRequests[video]=requests
+            if i0 == len(self._videoList):
+                self._videoList.append(video)
+        if len(self._videoList)==0:
+            self._videoList.append(video)
+        self._videoDict[video]=requests
 
     def return_total_latency(self):
         latency=0
@@ -82,10 +90,81 @@ class EndPoint:
         return self._cacheList
 
 class World :
-    def __init__(self,cacheList,videoList,endPointList):
-        self._cacheList=cacheList
-        self._videoList=videoList
-        self._endPointList=endPointList
+    def __init__(self,filename):
+        file = open(filename, 'r')
+        main_file = file.readlines()
+
+        temp_array = []
+        temp_number = ""
+        for x in range(len(main_file[0])):
+            if (main_file[0][x] == " ") or (x == (len(main_file[0]) - 1)):
+                temp_array.append(temp_number)
+                temp_number = ""
+            else:
+                temp_number += main_file[0][x]
+
+        videos = int(temp_array[0])
+        endpoints = int(temp_array[1])
+        caches = int(temp_array[3])
+        size = int(temp_array[4])
+
+        cache_array = []
+        for cs in range(caches):
+            cache_array.append(Cache(size))
+
+        for x in range(len(main_file[1])):
+            if (main_file[1][x] == " ") or (x == (len(main_file[0]) - 1)):
+                temp_array.append(temp_number)
+                temp_number = ""
+            else:
+                temp_number += main_file[1][x]
+
+        # store video data into an array of video class
+        video_array = []
+        for video in range(videos):
+            video_array.append(Video(video, int(temp_array[video])))
+
+        temp_array = []
+        counter = 2
+
+        endpoint_array = []
+        for endpoint in range(endpoints):
+            for x in range(len(main_file[counter])):
+                if (main_file[counter][x] == " ") or (x == (len(main_file[counter]) - 1)):
+                    temp_array.append(temp_number)
+                    temp_number = ""
+                else:
+                    temp_number += main_file[counter][x]
+
+            endpoint_array.append(EndPoint(int(temp_array[1])))
+            counter += 1
+            temp_array_2 = []
+            for cache in range(int(temp_array[1])):
+                for x in range(len(main_file[counter])):
+                    if (main_file[counter][x] == " ") or (x == (len(main_file[counter]) - 1)):
+                        temp_array_2.append(temp_number)
+                        temp_number = ""
+                    else:
+                        temp_number += main_file[counter][x]
+                counter += 1
+                endpoint_array[endpoint].add_cache(cache_array[int(temp_array_2[0])], int(temp_array_2[1]))
+
+            temp_array = []
+
+        for lines in range(counter + 1, len(main_file)):
+            for x in range(len(main_file[lines])):
+                if (main_file[lines][x] == " ") or (x == (len(main_file[lines]) - 1)):
+                    temp_array.append(temp_number)
+                    temp_number = ""
+                else:
+                    temp_number += main_file[lines][x]
+
+            endpoint_array[int(temp_array[1])].add_video(video_array[int(temp_array[0])], int(temp_array[2]))
+
+            temp_array = []
+        self._cacheList = cache_array
+        self._videoList = video_array
+        self._endPointList = endpoint_array
 
     def return_cache_list(self):
         return self._cacheList
@@ -95,3 +174,33 @@ class World :
 
     def return_endpoint_list(self):
         return self._endPointList
+
+
+world = World("/home/brendan/Programming/hashcode/me_at_the_zoo.in")
+endpoints = world.return_endpoint_list()
+used_caches = {}
+for endpoint in endpoints:
+    videos = endpoint.return_video_list()
+    caches = endpoint.return_cache_list()
+    for video in videos:
+        video_in_cache = False
+        for cache in caches:
+            if video.return_size() <= cache.return_size():
+                if cache not in used_caches:
+                    used_caches[cache] = video
+                else:
+                    used_caches[cache].append(video)
+                cache.decrement_size(video.return_size())
+
+                break
+print (len(used_caches.keys()))
+
+for i in used_caches.keys():
+    output = str(i)
+    array = used_caches.get(i)
+    for x in array:
+        output += " " + str(x)
+
+    print(output)
+
+
