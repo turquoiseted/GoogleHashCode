@@ -1,46 +1,62 @@
 class Video:
     def __init__(self, name, size):
-        self._name=name
-        self._size=size
+        self._name = name
+        self._size = size
 
-
-    def returnName(self):
+    def return_name(self):
         return self._name
 
-    def returnSize(self):
+    def return_size(self):
         return self._size
 
 class Cache:
-    def __init__ (self, name):
-        self._name=name
-        self._videoList=[]
+    def __init__ (self, size):
+        self._videoList = []
+        self._size = size
 
-    def addVideo(self, video):
+    def add_video(self, video):
         self._videoList.append(video)
 
-    def checkForVideo(self,video):
+    def check_for_video(self,video):
         for i0 in range(len(self._videoList)):
             if self._videoList[i0].returnName()==video.returnName:
                return True
         return False
+
+    def return_size(self):
+        return self._size
+
+    def decrement_size(self,number):
+        self._size-=self._size-number
+
 
 class EndPoint:
     def __init__(self,latency):
         self._cacheDict={}
         self._cacheList=[]
         self._videoList=[]
-        self._videoRequests{}
+        self._videoRequests={}
         self._latency=latency
 
-    def addCache(self, cache, latency):
-        self._cacheList.append(cache)
+    def add_cache(self, cache, latency):
+        for i0 in range(len(self._cacheList)):
+            if self._cacheDict[self._cacheList[i0]]>latency:
+                for i1 in range(len(self._cacheList),i0):
+                    self._cacheList[i1+1]=self._cacheList[i1]
+                self._cacheList[i0]=cache
+                break
         self._cacheDict[cache]=latency
 
-    def addVideo(self,video,requests):
-        self._videoList.append(video)
+    def add_video(self,video,requests):
+        for i0 in range(len(self._cacheList)):
+            if self._videoDict[self._videoList[i0]]<requests:
+                for i1 in range(len(self._videoList),i0):
+                    self._videoList[i1+1]=self._videoList[i1]
+                self._cacheList[i0]=video
+                break
         self._videoRequests[video]=requests
 
-    def returnTotalLatency(self):
+    def return_total_latency(self):
         latency=0
         for i0 in self._videoList:
             if self.returnLatency(i0)!=-1:
@@ -49,12 +65,14 @@ class EndPoint:
                 latency+=self._latency
         return latency
 
-    def returnLatency(self, video):
+    def return_latency(self, video):
         lowest=-1
         for i0 in range(len(self._cacheList)):
-            if self._cacheList[].checkForVideo(video):
+            if self._cacheList[i0].checkForVideo(video):
                 if lowest==-1:
                     lowest=self._cacheDict[self._cacheList[i0]]
                 elif lowest>=self._cacheDict[self._cacheList[i0]]:
                     lowest=self._cacheDict[self._cacheList[i0]]
         return lowest
+
+
